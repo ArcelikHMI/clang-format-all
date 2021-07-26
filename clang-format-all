@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+set -x 
 function usage {
     echo "Usage: $0 DIR..."
     exit 1
@@ -43,6 +43,10 @@ done
 if [ -z "$FMT" ]; then
     echo "failed to find clang-format"
     exit 1
+fi
+
+if [ ! -z "$VALIDATE" ]; then
+    EXTRA_ARGS="--Werror --dry-run"
 fi
 
 # Check all of the arguments first to make sure they're all directories
@@ -79,6 +83,6 @@ for dir in "$@"; do
          -o -name '*.h' \
          -o -name '*.hh' \
          -o -name '*.hpp' \) \
-         -exec "${FMT}" -style=file -i '{}' \;
+         -exec "${FMT}" ${EXTRA_ARGS} -style=file -i '{}' \;
     popd &>/dev/null
 done
